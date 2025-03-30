@@ -8,10 +8,10 @@ REDIS_PORT = 6379
 REDIS_DB = 0
 
 #bot
-BOT_TOKEN = "8157447181:AAFpGVEQzwd3OPVawDNM4EoOQKS9BHBy3NI"
-BOT_USER_ID = 8157447181
+BOT_TOKEN = "7653701897:AAHqhj1AxSMp_5e0yaJpA-noA4SJL1hKJcw"
+BOT_USER_ID = 7653701897
 BOT_USERNAME = "EsfiQuizBot"
-BOT_NAME = "EsfiQuizBot"
+BOT_NAME = "EsfiQuiz | مسابقه کوییز 🚀"
 
 
 #sponsor
@@ -22,10 +22,10 @@ SPONSOR_CHANNEL_URL = "https://t.me/Esfima"
 
 
 #admin
-ADMIN_ID = 7903509636
+ADMIN_ID = 7404361314
 
 # تغییر ADMIN_ID به ADMIN_IDS به صورت لیست
-ADMIN_IDS = ["7903509636"]
+ADMIN_IDS = ["7404361314"]
 
 #Topic Settings
 TOPIC_NAME_MAX_LENGTH = 20
