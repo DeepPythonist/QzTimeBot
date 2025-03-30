@@ -25,5 +25,5 @@ admin_help_message = """
 
 @admin_help_router.message(Command("help"), F.from_user.id == config.ADMIN_ID)
 async def show_admin_help(message: Message) -> None:
-    await message.answer("Help message")
+    await message.answer(admin_help_message)
 
