@@ -23,7 +23,7 @@ SPONSOR_FOOTER = f" "
 # Constant messages
 MESSAGES = {
     "global_leaderboard_title": "🌎 <b>۲۰ قهرمان برتر کوئیز</b> 🌎\n\n",
-    "user_stats_row": "{position}. {full_name}: {score} امتیاز (✓{correct} ✗{wrong} 📊{total})\n",
+    "user_stats_row": "{position}. {full_name}: {score} ⭐️ (✓{correct} ✗{wrong} 📊{total})\n",
     "empty_leaderboard": "❗ هنوز هیچ کاربری در کوئیزها شرکت نکرده است!" + SPONSOR_FOOTER,
     "error": "❌ خطایی رخ داد: {error}" + SPONSOR_FOOTER,
     "back": "🏠 بازگشت به منوی اصلی",

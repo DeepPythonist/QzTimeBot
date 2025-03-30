@@ -117,6 +117,12 @@ def get_final_keyboard(topic_id: str) -> InlineKeyboardMarkup:
                 text=f"👑 {config.SPONSOR_CHANNEL_NAME}",
                 url=config.SPONSOR_CHANNEL_URL
             )
+        ],
+        [
+            InlineKeyboardButton(
+                text=f"{config.BOT_NAME}",
+                url=f"https://t.me/{config.BOT_USERNAME}"
+            )
         ]
     ]
     
@@ -148,7 +154,7 @@ def format_leaderboard(participants: Dict[int, Dict[str, Any]]) -> str:
         elif i == 1: medal = "🥈 "
         elif i == 2: medal = "🥉 "
         
-        line = f"{medal}{i+1}. {user_data['full_name']}: {user_data['total_points']} امتیاز ({user_data['total_correct']} صحیح، {user_data['total_wrong']} غلط)"
+        line = f"{medal}{i+1}. {user_data['full_name']}: {user_data['total_points']} ⭐️ ({user_data['total_correct']} ✔️ {user_data['total_wrong']} ✖️)"
         leaderboard_lines.append(line)
     
     return "\n".join(leaderboard_lines)
@@ -187,7 +193,7 @@ def format_top_players(participants: Dict[int, Dict[str, Any]], max_players: int
         elif i == 1: medal = "🥈 "
         elif i == 2: medal = "🥉 "
         
-        line = f"{medal}{i+1}. {user_data['full_name']}: {user_data['total_points']} امتیاز"
+        line = f"{medal}{i+1}. {user_data['full_name']}: {user_data['total_points']} ⭐️"
         leaderboard_lines.append(line)
     
     # متن لیست

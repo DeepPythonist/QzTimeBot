@@ -20,6 +20,7 @@ db = Database()
 
 async def main():
     logger.info("Bot initialization started...")
+    bot.delete_webhook(drop_pending_updates=True)
     
     
     logger.info("Loading routers...")
@@ -65,6 +66,9 @@ async def main():
     
     logger.info("Loading help_router...")
     from plugins.help_bot import help_router
+
+    logger.info("Loading admin_help_router...")
+    from plugins.admin_help import admin_help_router
     
     # Include routers
     logger.info("Including routers in dispatcher...")
@@ -82,6 +86,7 @@ async def main():
     dp.include_router(start_quiz_router)
     dp.include_router(admin_stats_router)
     dp.include_router(help_router)
+    dp.include_router(admin_help_router)
     logger.info("All routers loaded successfully. Starting polling...")
     await dp.start_polling(bot)
 
