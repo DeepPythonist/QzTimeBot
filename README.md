@@ -1,8 +1,4 @@
-# 🎮 ربات کوییز تلگرام (EsfiQuizBot)
-
-<p align="center">
-  <img src="https://github.com/esfiam/EsfiQuizBot/assets/logo.png" alt="EsfiQuizBot Logo" width="200"/>
-</p>
+# 🎮 ربات کوییز تلگرام (QzTimeBot)
 
 <div dir="rtl">
 
@@ -105,7 +101,7 @@ EsfiQuizBot/
 
 برای ارتباط با تیم توسعه می‌توانید از تلگرام یا ایمیل استفاده کنید:
 - کانال تلگرام: [DeepPythonist](https://t.me/DeepPythonist)
-- ایمیل: [contact@example.com](mailto:contact@example.com)
+- ایمیل: [mrasolesfandiari@gmail.com](mailto:mrasolesfandiari@gmail.com)
 
 </div>
 
@@ -143,8 +139,8 @@ Telegram Quiz Bot is an educational and entertainment platform that allows users
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/esfiam/EsfiQuizBot.git
-   cd EsfiQuizBot
+   git clone https://github.com/DeepPythonist/QzTimeBot.git
+   cd QzTimeBot
    ```
 
 2. **Create a virtual environment and install dependencies**
@@ -216,7 +212,7 @@ Your collaboration in developing this project is welcome! Please submit your pul
 
 To contact the development team, you can use Telegram or email:
 - Telegram channel: [DeepPythonist](https://t.me/DeepPythonist)
-- Email: [contact@example.com](mailto:contact@example.com)
+- Email: [mrasolesfandiari@gmail.com](mailto:mrasolesfandiari@gmail.com)
 
 ## 📜 License
 
