@@ -1,5 +1,6 @@
 # 🎮 ربات کوییز تلگرام (QzTimeBot)
 
+
 <div dir="rtl">
 
 ## 📝 توضیحات
@@ -107,11 +108,8 @@ EsfiQuizBot/
 
 ---
 
-# 🎮 Telegram Quiz Bot (EsfiQuizBot)
+# 🎮 Telegram Quiz Bot (QzTimeBot)
 
-<p align="center">
-  <img src="https://github.com/esfiam/EsfiQuizBot/assets/logo.png" alt="EsfiQuizBot Logo" width="200"/>
-</p>
 
 ## 📝 Description
 
