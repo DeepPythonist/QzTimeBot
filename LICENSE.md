@@ -2,7 +2,7 @@
 
 ## English
 
-Copyright (c) 2024 EsfiQuizBot
+Copyright (c) 2024 QzTimeBot
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ SOFTWARE.
 
 # مجوز MIT
 
-حق نشر (c) ۲۰۲۴ EsfiQuizBot
+حق نشر (c) ۲۰۲۴ QzTimeBot
 
 بدین وسیله به هر شخصی که نسخه‌ای از این نرم‌افزار و فایل‌های مستندات مربوطه را دریافت می‌کند، اجازه داده می‌شود تا بدون هیچ محدودیتی با این نرم‌افزار کار کند، از جمله و بدون محدودیت، حق استفاده، کپی، اصلاح، ادغام، انتشار، توزیع، صدور مجوز فرعی و/یا فروش نسخه‌های نرم‌افزار، و اجازه به اشخاصی که نرم‌افزار برای آن‌ها تهیه شده است، به شرط رعایت شرایط زیر:
 
