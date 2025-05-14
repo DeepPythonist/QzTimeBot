@@ -1,6 +1,6 @@
 #database
 MONGO_URL = "mongodb://localhost:27017/"
-MONGO_DB_NAME = "EsfiQuizBot"
+MONGO_DB_NAME = "QuizTime"
 
 #redis
 REDIS_HOST = "localhost"
@@ -8,16 +8,16 @@ REDIS_PORT = 6379
 REDIS_DB = 0
 
 #bot
-BOT_TOKEN = "7653701897:AAHqhj1AxSMp_5e0yaJpA-noA4SJL1hKJcw"
+BOT_TOKEN = "YOUR_BOT_TOKEN"
 BOT_USER_ID = 7653701897
-BOT_USERNAME = "EsfiQuizBot"
-BOT_NAME = "EsfiQuiz | مسابقه کوییز 🚀"
+BOT_USERNAME = "QzTimeBot"
+BOT_NAME = "QzTimeBot | مسابقه کوییز 🚀"
 
 
 #sponsor
 SPONSOR_CHANNEL_ID = -1002425240348
-SPONSOR_CHANNEL_NAME = "Esfima | تکنولوژی"
-SPONSOR_CHANNEL_URL = "https://t.me/Esfima"
+SPONSOR_CHANNEL_NAME = "Deep Pythonist "
+SPONSOR_CHANNEL_URL = "https://t.me/DeepPythonist"
 
 
 
