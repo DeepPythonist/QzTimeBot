@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from typing import Dict, List, Any, Optional, Union
 import datetime
 import logging
@@ -59,24 +56,20 @@ class Database:
             existing_user = self.users.find_one({"user_id": user_id})
 
             if existing_user:
-                # User exists, update fields
                 update_fields = {"updated_at": now}
 
                 if has_start is not None:
                     update_fields["has_start"] = has_start
 
-                # Single update operation instead of potentially multiple
                 self.users.update_one(
                     {"user_id": user_id},
                     {"$set": update_fields}
                 )
 
-                # Return updated user document
                 updated_user = self.users.find_one({"user_id": user_id})
                 logger.debug(f"User {user_id} updated")
                 return {"exists": True, "user_data": updated_user}
 
-            # Create new user document
             new_user = {
                 "user_id": user_id,
                 "username": username,
@@ -114,16 +107,13 @@ class Database:
             Dict[str, Any]: Success status and user data if found
         """
         try:
-            # ابتدا تلاش برای تبدیل به Int64 و جستجو به صورت عددی
             user_id_long = Int64(int(user_id))
             user = self.users.find_one({"user_id": user_id_long})
             if user:
                 return {"status": "success", "user": user}
         except:
-            # در صورت خطا در تبدیل، این بخش نادیده گرفته می‌شود
             pass
         
-        # جستجو با رشته
         user = self.users.find_one({"user_id": user_id})
         if not user:
             logger.debug(f"User not found with either numeric or string ID: {user_id}")
@@ -174,16 +164,11 @@ class Database:
         Returns:
             int: Count of users created today
         """
-        # به جای استفاده از today = datetime.datetime.now().date()
-        # از یک محدوده زمانی برای امروز استفاده می‌کنیم
         
-        # شروع امروز (ساعت 00:00:00)
         today_start = datetime.datetime.combine(datetime.datetime.now().date(), datetime.time.min)
         
-        # انتهای امروز (ساعت 23:59:59)
         today_end = datetime.datetime.combine(datetime.datetime.now().date(), datetime.time.max)
         
-        # استفاده از محدوده زمانی به جای تاریخ
         count = self.users.count_documents({
             "created_at": {
                 "$gte": today_start,
@@ -207,7 +192,6 @@ class Database:
         Raises:
             ValueError: If topic name or description doesn't meet requirements
         """
-        # Validate topic name
         if not topic_name or not isinstance(topic_name, str):
             raise ValueError("Topic name cannot be empty")
 
@@ -215,7 +199,6 @@ class Database:
             raise ValueError(
                 f"Topic name must be between {config.TOPIC_NAME_MIN_LENGTH} and {config.TOPIC_NAME_MAX_LENGTH} characters")
 
-        # Validate topic description
         if not isinstance(topic_description, str):
             raise ValueError("Topic description must be a string")
 
@@ -224,13 +207,11 @@ class Database:
             raise ValueError(
                 f"Topic description must be between {config.TOPIC_DESCRIPTION_MIN_LENGTH} and {config.TOPIC_DESCRIPTION_MAX_LENGTH} characters")
 
-        # Check for existing topic with the same name
         existing_topic = self.topics.find_one({"name": topic_name})
         if existing_topic:
             return {"status": "error", "message": "A topic with this name already exists"}
 
         topic_id = str(uuid.uuid4())[:8]
-        # Prepare topic data
         now = datetime.datetime.now()
         topic_data = {
             "topic_id": topic_id,
@@ -238,17 +219,15 @@ class Database:
             "description": topic_description,
             "created_at": now,
             "updated_at": now,
-            "is_active": True,  # Topic active status
+            "is_active": True,
             "stats": {
                 "topic_played": 0,
             }
         }
 
         try:
-            # Insert topic into database
             result = self.topics.insert_one(topic_data)
 
-            # Add ID to the returned data
             topic_data["_id"] = result.inserted_id
             logger.debug(f"Topic '{topic_name}' created with ID: {topic_id}")
 
@@ -258,7 +237,6 @@ class Database:
                 "topic": topic_data
             }
         except Exception as e:
-            # Log the error
             logger.error(f"Error creating topic: {str(e)}")
             return {
                 "status": "error",
@@ -392,10 +370,8 @@ class Database:
             return {"status": "error", "message": "Topic not found"}
 
         try:
-            # Delete all questions associated with this topic
             questions_deleted = self.questions.delete_many({"topic_id": topic_id})
             
-            # Delete the topic
             self.topics.delete_one({"topic_id": topic_id})
             logger.debug(f"Topic {topic_id} deleted with {questions_deleted.deleted_count} associated questions")
             
@@ -407,7 +383,6 @@ class Database:
             logger.error(f"Error deleting topic: {str(e)}")
             return {"status": "error", "message": f"Failed to delete topic: {str(e)}"}
 
-    # Questions management
     def create_question(self, topic_id: str, question_text: str, options: list, correct_option: int,
                         created_by: str, is_approved: bool = False) -> Dict[str, Any]:
         """
@@ -425,7 +400,6 @@ class Database:
             Dict[str, Any]: Created question information or error message
         """
         try:
-            # Validate question text length
             if not question_text or not isinstance(question_text, str):
                 return {"status": "error", "message": "Question text cannot be empty"}
 
@@ -433,7 +407,6 @@ class Database:
                 return {"status": "error",
                         "message": f"Question text must be between {config.QUESTION_MIN_LENGTH} and {config.QUESTION_MAX_LENGTH} characters"}
 
-            # Validate options
             if not options or len(options) != config.OPTION_COUNT:
                 return {"status": "error", "message": f"Question must have exactly {config.OPTION_COUNT} options"}
 
@@ -445,19 +418,15 @@ class Database:
                     return {"status": "error",
                             "message": f"Option {i + 1} must be between {config.OPTION_MIN_LENGTH} and {config.OPTION_MAX_LENGTH} characters"}
 
-            # Validate correct option index
             if correct_option < 0 or correct_option >= len(options):
                 return {"status": "error", "message": f"Correct option index must be between 0 and {len(options) - 1}"}
 
-            # Validate topic exists
             topic = self.topics.find_one({"topic_id": topic_id})
             if not topic:
                 return {"status": "error", "message": "Topic not found"}
 
-            # Create question ID
             question_id = str(uuid.uuid4())[:8]
 
-            # Prepare question data
             now = datetime.datetime.now()
             question_data = {
                 "question_id": question_id,
@@ -471,13 +440,10 @@ class Database:
                 "updated_at": now
             }
 
-            # Insert question into database
             result = self.questions.insert_one(question_data)
 
-            # Add ID to the returned data
             question_data["_id"] = result.inserted_id
 
-            # Update question count in topic if approved
             if is_approved:
                 self.topics.update_one(
                     {"topic_id": topic_id},
@@ -572,13 +538,11 @@ class Database:
             return {"status": "error", "message": "Question is already approved"}
 
         try:
-            # Update question approval status
             self.questions.update_one(
                 {"question_id": question_id},
                 {"$set": {"is_approved": True, "updated_at": datetime.datetime.now()}}
             )
 
-            # Update question count in topic
             self.topics.update_one(
                 {"topic_id": question["topic_id"]},
                 {"$inc": {"question_count": 1}}
@@ -627,37 +591,30 @@ class Database:
             Dict[str, Any]: Status and message
         """
         try:
-            # بررسی وجود کاربر - پشتیبانی از string و long
-            # سعی می‌کنیم اول به صورت long
             try:
                 user_id_long = Int64(int(user_id))
                 user = self.users.find_one({"user_id": user_id_long})
                 if user:
-                    # کاربر پیدا شد، به‌روزرسانی با همان نوع
                     result = self.users.update_one(
                         {"user_id": user_id_long},
                         {"$inc": {"stats.total_quiz": 1, "stats.total_correct": correct_count, "stats.total_wrong": wrong_count, "stats.total_points": points}}
                     )
                 else:
-                    # جستجو با رشته
                     user = self.users.find_one({"user_id": user_id})
                     if not user:
                         logger.warning(f"User {user_id} not found for updating stats")
                         return {"status": "error", "message": "User not found"}
                     
-                    # به‌روزرسانی با رشته
                     result = self.users.update_one(
                         {"user_id": user_id},
                         {"$inc": {"stats.total_quiz": 1, "stats.total_correct": correct_count, "stats.total_wrong": wrong_count, "stats.total_points": points}}
                     )
             except:
-                # اگر تبدیل به long با خطا مواجه شد، با همان رشته تلاش می‌کنیم
                 user = self.users.find_one({"user_id": user_id})
                 if not user:
                     logger.warning(f"User {user_id} not found for updating stats")
                     return {"status": "error", "message": "User not found"}
                 
-                # به‌روزرسانی با رشته
                 result = self.users.update_one(
                     {"user_id": user_id},
                     {"$inc": {"stats.total_quiz": 1, "stats.total_correct": correct_count, "stats.total_wrong": wrong_count, "stats.total_points": points}}
@@ -686,14 +643,10 @@ class Database:
             Dict[str, Any]: Status and message
         """
         try:
-            # پشتیبانی از انواع مختلف user_id (عددی و رشته‌ای)
             try:
-                # ابتدا به صورت عددی امتحان می‌کنیم
                 user_id_int = Int64(int(user_id))
                 user = self.users.find_one({"user_id": user_id_int})
                 if user:
-                    # اگر کاربر با ID عددی پیدا شد
-                    # اطمینان از وجود فیلد stats
                     update_query = {}
                     if "stats" not in user:
                         update_query["stats"] = {"quiz_created": 1}
@@ -704,13 +657,10 @@ class Database:
                     logger.debug(f"Updated quiz_created for user {user_id} (numeric)")
                     return {"status": "success", "message": "Quiz created updated successfully"}
             except:
-                # در صورت خطا با رشته امتحان می‌کنیم
                 pass
                 
-            # با رشته امتحان می‌کنیم
             user = self.users.find_one({"user_id": user_id})
             if user:
-                # اطمینان از وجود فیلد stats
                 update_query = {}
                 if "stats" not in user:
                     update_query["stats"] = {"quiz_created": 1}
@@ -721,7 +671,6 @@ class Database:
                 logger.debug(f"Updated quiz_created for user {user_id} (string)")
                 return {"status": "success", "message": "Quiz created updated successfully"}
             else:
-                # کاربر پیدا نشد
                 logger.warning(f"User not found for updating quiz_created: {user_id}")
                 return {"status": "warning", "message": "User not found"}
                 
@@ -741,24 +690,19 @@ class Database:
             Dict[str, Any]: Status and message
         """
         try:
-            # بررسی وجود موضوع
             topic = self.topics.find_one({"topic_id": topic_id})
             if not topic:
                 logger.warning(f"Topic not found for updating topic_played: {topic_id}")
                 return {"status": "warning", "message": "Topic not found"}
             
-            # اطمینان از وجود فیلد stats
+           
             update_query = {}
             if "stats" not in topic:
-                # ایجاد فیلد stats اگر وجود ندارد
                 update_query["$set"] = {"stats": {"topic_played": 1}}
             else:
-                # اطمینان از وجود فیلد topic_played در stats
                 if "topic_played" not in topic["stats"]:
-                    # اگر فیلد topic_played وجود ندارد، آن را با مقدار 1 ایجاد می‌کنیم
                     update_query["$set"] = {"stats.topic_played": 1}
                 else:
-                    # در غیر این صورت مقدار را افزایش می‌دهیم
                     update_query["$inc"] = {"stats.topic_played": 1}
             
             self.topics.update_one({"topic_id": topic_id}, update_query)
@@ -780,7 +724,6 @@ class Database:
             Dict[str, Any]: Status and count of submitted questions
         """
         try:
-            # Count questions created by this user
             count = self.questions.count_documents({"created_by": str(user_id)})
             
             return {
@@ -812,21 +755,17 @@ class Database:
             Dict[str, Any]: Dictionary with status and statistics or error message
         """
         try:
-            # User statistics
             users_count = self.get_count_of_users()
             started_users_count = self.get_count_of_started_users()
             today_users_count = self.get_count_today_users()
             
-            # Topic statistics
             topics_count = self.topics.count_documents({})
             active_topics_count = self.topics.count_documents({"is_active": True})
             
-            # Question statistics
             total_questions = self.questions.count_documents({})
             approved_questions = self.questions.count_documents({"is_approved": True})
             pending_questions = self.questions.count_documents({"is_approved": False})
             
-            # Most popular topics (top 3)
             popular_topics = []
             popular_topics_data = list(self.topics.find(
                 {}, 
@@ -834,21 +773,17 @@ class Database:
             ).sort([("stats.topic_played", -1)]).limit(3))
             
             for topic in popular_topics_data:
-                # Calculate play count
                 topic_played = 0
                 if "stats" in topic and "topic_played" in topic["stats"]:
                     topic_played = topic["stats"]["topic_played"]
                 
-                # Add to popular topics list
                 popular_topics.append({
                     "topic_id": topic["topic_id"],
                     "topic_name": topic["name"],
                     "play_count": topic_played
                 })
             
-            # Top question submitters (top 3)
             top_submitters = []
-            # Pipeline to group by submitter and count questions
             pipeline = [
                 {"$group": {"_id": "$created_by", "question_count": {"$sum": 1}}},
                 {"$sort": {"question_count": -1}},
@@ -861,32 +796,26 @@ class Database:
                 user_id = submitter["_id"]
                 count = submitter["question_count"]
                 
-                # Try to find user information
                 user_name = None
                 user = self.get_user_by_id(str(user_id))
                 if user["status"] == "success" and user["user"]:
                     user_data = user["user"]
                     
-                    # Check for name or username
                     if "full_name" in user_data and user_data["full_name"]:
                         user_name = user_data["full_name"]
                     elif "username" in user_data and user_data["username"]:
                         user_name = f"@{user_data['username']}"
                 
-                # Add to top submitters list
                 top_submitters.append({
                     "user_id": user_id,
                     "full_name": user_name,
                     "question_count": count
                 })
             
-            # Top quiz creators (top 3)
             top_creators = []
             
-            # Find users with highest quiz_created count
             quiz_creators_count = self.users.count_documents({"stats.quiz_created": {"$exists": True, "$gt": 0}})
             
-            # Pipeline to find top quiz creators
             creators_pipeline = [
                 {"$match": {"stats.quiz_created": {"$exists": True, "$gt": 0}}},
                 {"$sort": {"stats.quiz_created": -1}},
@@ -898,26 +827,21 @@ class Database:
             
             for creator in creators_data:
                 user_id = creator["user_id"]
-                # Get quiz count
                 quiz_count = creator.get("quiz_count", 0)
                 
-                # Try to find user name
                 user_name = None
                 if "full_name" in creator and creator["full_name"]:
                     user_name = creator["full_name"]
                 elif "username" in creator and creator["username"]:
                     user_name = f"@{creator['username']}"
                 
-                # Add to top creators list
                 top_creators.append({
                     "user_id": user_id,
                     "full_name": user_name,
                     "quiz_count": quiz_count
                 })
             
-            # Alternative method if no creators found with pipeline
             if not top_creators:
-                # Find all users and filter those with quiz_created > 0
                 all_users = list(self.users.find())
                 users_with_quizzes = []
                 
@@ -930,50 +854,41 @@ class Database:
                             "quiz_count": user["stats"]["quiz_created"]
                         })
                 
-                # Sort by quiz count (descending)
                 users_with_quizzes.sort(key=lambda x: x["quiz_count"], reverse=True)
                 
-                # Get top 3 creators
                 for creator in users_with_quizzes[:3]:
                     user_id = creator["user_id"]
                     quiz_count = creator["quiz_count"]
                     
-                    # Try to find user name
                     user_name = None
                     if creator["full_name"]:
                         user_name = creator["full_name"]
                     elif creator["username"]:
                         user_name = f"@{creator['username']}"
                     
-                    # Add to top creators list
                     top_creators.append({
                         "user_id": user_id,
                         "full_name": user_name,
                         "quiz_count": quiz_count
                     })
             
-            # Questions per topic count
             questions_per_topic = []
             
-            # Collect all topics
             topic_counts = {}
             topic_names = {}
             all_topics = list(self.topics.find({}, {"topic_id": 1, "name": 1}))
             
-            # Initialize with zero counts
             for topic in all_topics:
                 topic_id = topic["topic_id"]
                 topic_counts[topic_id] = 0
                 topic_names[topic_id] = topic["name"]
             
-            # Count approved questions for each topic
             approved_questions_cursor = self.questions.find({"is_approved": True})
             for question in approved_questions_cursor:
                 topic_id = question.get("topic_id")
                 if topic_id in topic_counts:
                     topic_counts[topic_id] += 1
             
-            # Create final list of questions per topic
             for topic_id, count in topic_counts.items():
                 questions_per_topic.append({
                     "topic_id": topic_id,
@@ -981,25 +896,20 @@ class Database:
                     "question_count": count
                 })
             
-            # Sort by question count (descending)
             questions_per_topic.sort(key=lambda x: x["question_count"], reverse=True)
             
-            # Questions with invalid topics
             invalid_topics = []
             topic_ids = set(topic_names.keys())
             invalid_count = 0
             
-            # Count questions with invalid topics
             for question in self.questions.find({"is_approved": True}):
                 topic_id = question.get("topic_id")
                 if not topic_id or topic_id not in topic_ids:
                     invalid_count += 1
-                    # Add question ID to invalid list
                     invalid_topics.append(question.get("question_id", "unknown"))
             
             logger.info(f"Generated bot statistics: {users_count} users, {topics_count} topics, {total_questions} questions")
             
-            # Final statistics structure
             return {
                 "status": "success",
                 "statistics": {
